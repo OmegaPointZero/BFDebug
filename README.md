@@ -1,68 +1,45 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# BFD - The BrainFuck Debugger
 
-## Available Scripts
+BFDebugger is an application built with React.js to allow users to debug brainfuck applications. This will provide a field to input STDIN input, a window that keeps track of STDOUT output, a window where the .bf code will be pasted, and a window that shows the tape. The tape's window is made of repeating cells of an identical width, that wrap (probably flex-box? Unless React has something better than that).
 
-In the project directory, you can run:
+An overview of the debugger in it's current phase will be kept in this README. This should be as easy as possible to update and make additions to, making it easier to create extensions of the language, and debug them as well.
 
-### `npm start`
+The debugger is ultimately held in the state of `debugger.js`:
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* `state.program` is the actual brainfuck program, loaded to be executed
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+* `state.tape` is the program's memory tape, 30000 cells. Changing this value in the `new Array(30000)` function will allow you to customize the size of the tape.
 
-### `npm test`
+* `state.debugging_memory` is the index of the highest memory cell accessed by the program. The debugger will use this number to determine how many memory cells to display (so that we only render memory cells that have been accessed, and ostensibly used, rather than an arbitrary amount).
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* `state.running` is whether or not the debugger is running. Instructions only execute while `state.running` is true. Breakpoints set it to false, as does resetting it
 
-### `npm run build`
+* `state.eip` is the instruction pointer, the index of the instruction in the program array. 
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* `state.dp` is the data pointer, the index of the current memory cell on the tape.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+## Current state of development
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The only currentely declared function is the one that updates the program. When the `Run` button gets hit, update_program() gets called during an initialization sequence.
 
-### `npm run eject`
+The initialization sequence should set EIP, DP to 0 and the tape to all 0's. The last thing it should do is call the update_program() method to reload the program used by the debugger.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Current sprint
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* Execute the Brainfuck code. 
+    * Load the instructions
+    * Initialize the tape
+    * Testing phases:
+        * **1**: Increment/decrement `state.dp` with **>** and **<**
+        * **2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.
+        * **3**: Print character at `state.tape[state.dp]` with **.**
+        * **4**: Write input from STDIN to `state.tape[state.dp]` with **,**
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+* Implement basic debugging
+    * A way to set breakpoints (ideally, by just clicking on a piece of code)
 
-## Learn More
+    * Highlight the current memory cell on the tape and current instruction
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    * Set a delay for all instruction executions. Let the user control how fast it goes
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify

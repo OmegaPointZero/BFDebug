@@ -9,9 +9,10 @@ class Debugger extends Component {
         this.state = { 
             program: null,
             eip: 0,
+            dp: 0,
             running: false,
             tape: new Array(30000).fill(0),
-            debugging_memory: new Array(),
+            debugging_memory: 0,
         }
     }
 
