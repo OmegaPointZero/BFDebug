@@ -20,10 +20,15 @@ class Debugger extends Component {
             output: "",
             input: ""
         }
-        this.handleChange = this.handleChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleProgramChange = this.handleProgramChange.bind(this);
     }
 
-    handleChange(event){
+    handleInputChange(event){
+        this.setState({input: event.target.value});
+    }
+
+    handleProgramChange(event){
         this.setState({input: event.target.value});
     }
 
@@ -184,26 +189,24 @@ class Debugger extends Component {
         return (<div className="debuggerDisplay">
 
             <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={this.state.running} errorMessage={this.state.error} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/>
-
-            <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
-            Pending input: {this.state.input}
             <div className="debugOptions">
                 <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
                 <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button>
             </div>
+            <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
             <div className="inline">
                 <div className="inputContainer">
                     <Output output={this.state.output} />
                     <div className="inputFieldContainer">
-                        <h3>Program Input</h3>
-                        <input onChange={this.handleChange} />
+                        <h3>Standard Input</h3>
+                        <input onChange={this.handleInputChange} />
+                    </div>
+                    <div className="inputFieldContainer">
+                        <h3>Brainfuck Program</h3>
+                        <textarea id="programInput" type="text" value={this.state.program} onChange={this.handleProgramChange} />
                     </div>
                 </div>
             </div>
-
-            <div>
-                <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} />
-            </div>            
         </div>
         )
     }
