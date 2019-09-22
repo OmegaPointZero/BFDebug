@@ -12,7 +12,8 @@ function App() {
         <br />
         <p>
             Below, paste or type your brainfuck program into the input area. Hit the button to start it, and watch it populate the memory in the space above.
-        </p><br />
+        </p>
+        <br />
         <Debugger />
       </header>
     </div>

@@ -22,7 +22,16 @@ class Debugger extends Component {
         this.setState({program: event.target.value, running:false});
     }
 
-/* ++++++++++[>++++++<-]>++++++++.+.----.+++.--.-.+.+++.--.--.+++++.-.
+    debugger_obj = {
+        program: null,
+        eip: 0,
+        dp: 0,
+        running: false,
+        tape: new Array(30000).fill(0),
+        debugging_memory: 0,
+    }
+/* 
+++++++++++[>++++++++++>++++++++++>++++++++++>++++++++++<<<<-]>.>.>.>.
 */
 
     handleSubmit(){
@@ -30,41 +39,57 @@ class Debugger extends Component {
         this.update_program(program);
     }
 
-
     bf_parse(instruction){
+        console.log(`parsing instruction: ${instruction}`)
         if(instruction === "+"){
             const newTape = this.state.tape.slice();
             var num = newTape[this.state.dp];
+            console.log(`num: ${num}`)
             num === 255 ? num = 0 : num++;
+            console.log(`operated num: ${num}`)
+            console.log(`dp: ${this.state.dp}`)
             newTape[this.state.dp] = num;
-            this.setState({tape:newTape});
+            console.log(`newtape: ${newTape.slice(0,40)}`)
+            this.setState((state) => ({tape:newTape}));
         } else if(instruction === "-"){
             const newTape = this.state.tape.slice();
             var number = newTape[this.state.dp];
             number === 0 ? number = 255 : number--;
             newTape[this.state.dp] = number;
-            this.setState({tape:newTape})
+/*
+this.setState((state) => ({ value: state.value + 1}));
+*/
+            this.setState((state) => ({ tape: newTape}));
         } else if(instruction === ">"){
-            this.setState((state)=>{return {dp: state.dp +1}});
+            this.setState((state) => ( {dp: state.dp +1}));
+            if(this.state.dp > this.state.debugging_memory){
+                this.setState((state)=> ({debugging_memory: this.state.dp}));
+            }
         } else if(instruction === "<"){
-            this.setState((state)=>{return {dp: state.dp - 1}});
+            this.setState((state)=> ({dp: state.dp - 1}));
+        }
+        var eip = this.state.eip;
+        var neweip = eip+1
+        this.setState((state) => ({eip: neweip}));
+        if(instruction !== undefined){
+            return true;
+        } else {
+            this.setState((state) => ({running:false}))
+            return false;
         }
     }
 
     run_debugger(){
-        while(this.state.running){
-            var current_instruction = this.state.program[this.state.eip];
-            this.bf_parse(current_instruction)
-            this.setState({eip: this.state.eip+1})
-            if(this.state.eip===this.state.program.length){
-                console.log(`Program ended (eip: ${this.state.eip})`)
-            }
-        }        
-    }
+        var len = this.state.program.length;
+        for(var i=0;i<len;i++){
+            this.bf_parse(this.state.program[i])
+        }
+    }        
+
 
     initialize(){
         console.log("initialize()")
-        this.setState({eip:0,dp:0,running:true})
+        this.setState({eip:0,dp:0,running:true});
     }
 
     pause(){
@@ -80,18 +105,15 @@ class Debugger extends Component {
     render(){
         return (<div>
             <div className="tapeMemoryDisplay">
-
                 <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} />
 
             </div>
             <div className="debugOptions">
-                <button id="run" onClick={() => {this.initialize(); this.run_debugger()}}>Run</button> <button id="pause" onClick={ () => {this.pause()} }>Pause</button> <button id="continue">Continue</button> 
+                <button id="run" onClick={() => {this.initialize(); this.run_debugger()}}>Run</button> <button id="pause" onClick={ () => {this.pause()} }>Pause</button> <button id="continue">Continue</button> <button onClick={(state) => {this.handleSubmit()}}>Load Program</button>
             </div>
-                <button onClick={(state) => {this.handleSubmit()}}>Load Program</button>
-                                <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} /><br />
-            <p>Debugger is going here. I'm in love with Katelyn and she probably doesn't think about me anymore. Sooo...let's get some kind of fucking job so we can go back home, learn to dance, get your shit together, and take her out.</p>
-
-
+            <div><br />
+            <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} />
+            </div>            
         </div>
         )
     }
