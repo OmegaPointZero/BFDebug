@@ -6,7 +6,7 @@ class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "+>+>+>+>+>+>+>+>+>+>+<<<<", /* fixed for now, will load into memory via user input later */
+            program: "+>+>+>+!>+>+>+>+>+>+>+<<<<", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
@@ -71,10 +71,13 @@ class Debugger extends Component {
         this.setState({running:true})
     }
 
+    continue_from_breakpoint(){
+        this.setState({running:true})
+    }
+
     run_debugger(){
         var eip = this.state.eip;
         var dp = this.state.dp;
-        console.log(`running debugger at eip: ${eip}`)
         switch(this.state.program[eip]){
             case '+':
                 this.increment_tape(this.state.dp);
@@ -99,6 +102,8 @@ class Debugger extends Component {
                     this.setState({dp: dp-1});
                 }
                 break; 
+            case '!':
+                this.setState({running: false});
             default:
                 break;
         }
@@ -116,7 +121,8 @@ class Debugger extends Component {
 
             </div><br />
             <div className="debugOptions">
-                <button id="run" onClick={() => {this.start_debugger()}}>Run</button>
+                <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
+                <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button>
             </div>
             <div><br />
             <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} />

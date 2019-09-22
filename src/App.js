@@ -6,12 +6,18 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>
+        <h1>
           The <code>BrainFuck</code> Debugger - version 0.0.2
-        </p>
+        </h1>
         <br />
         <p>
             Below, paste or type your brainfuck program into the input area. Hit the button to start it, and watch it populate the memory in the space below.
+        </p><br />
+        <p>
+            <h3>Debugger features</h3>
+            <p>
+                You can use the bang (!) character to set a breakpoint.
+            </p>
         </p>
         <br />
         <Debugger />
