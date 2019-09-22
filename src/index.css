@@ -12,15 +12,24 @@ code {
     monospace;
 }
 
+.debuggerDisplay{
+    width: 90%;
+}
+
 .tapeDisplay{
     display: flex;
 }
 
 .tapeCell{
-    width: 15%; 
-    height: 15%; 
+    width: 25px; 
+    height: 25px; 
     border-style:solid;
     border-width: 2px;
     border-color: white;
-    margin:auto;
+    margin: auto;
+}
+
+.active{
+    background-color: #CCCC00;
+    color: #222200;
 }

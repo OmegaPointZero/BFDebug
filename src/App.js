@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          The <code>BrainFuck</code> Debugger - version 0.0.1
+          The <code>BrainFuck</code> Debugger - version 0.0.2
         </p>
         <br />
         <p>
