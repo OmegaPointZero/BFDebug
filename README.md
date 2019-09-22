@@ -20,26 +20,52 @@ The debugger is ultimately held in the state of `debugger.js`:
 
 ## Current state of development
 
-The only currentely declared function is the one that updates the program. When the `Run` button gets hit, update_program() gets called during an initialization sequence.
+The application is currently undergoing a refactor, that appears to be working out better than the previous implementation. The current version is 0.0.06. 
 
-The initialization sequence should set EIP, DP to 0 and the tape to all 0's. The last thing it should do is call the update_program() method to reload the program used by the debugger.
+### 0.0.6 Updates
 
-### Current sprint
+* Debugger information shows the user the following:
+
+    * Instruction pointer
+
+    * Data Pointer
+
+    * Running status (true/false)
+
+    * Errors thrown by the debugger
+
+    * Number of cumulatively executed instructions
+
+* Tape Display is now functional. It shows the user the tape so far, and highlights the currently selected tape cell. Upon attempting to increment above 255 (1111 1111 in binary), it "rolls over" to 0; decrementing while at 0 "rolls over" to 255. These do not affect neighboring cells.
+
+* Breakpoint functionality has been added. A bang (!) in the BF code sets a breakpoint, where execution halts. This can be resumed by clicking the "continue" button, or reset with the "run" button.
+
+    * Perhaps the continue button should only be enabled if the running status is false and the instruction pointer is greater than 0.
+
+* The program is still hard-coded; allowing user input for the BF program needs additional work:
+
+    * The input form should, upon code execution, "grey out", and not let the user touch it until the execution has been halted. 
+
+    * The current instruction should be, somehow, highlighted in the "greyed out" input section
+
+    * Input section needs to be resized
+
+### Current goals
 
 * Execute the Brainfuck code. 
-    * Load the instructions
-    * Initialize the tape
+    * Load the instructions from the user
+    * ~~Initialize the tape~~
     * Testing phases:
-        * **1**: Increment/decrement `state.dp` with **>** and **<**
-        * **2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.
+        * ~~**1**: Increment/decrement `state.dp` with **>** and **<**~~
+        * ~~**2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.~~
         * **3**: Print character at `state.tape[state.dp]` with **.**
         * **4**: Write input from STDIN to `state.tape[state.dp]` with **,**
 
 
 * Implement basic debugging
-    * A way to set breakpoints (ideally, by just clicking on a piece of code)
+    * ~~A way to set breakpoints (ideally, by just clicking on a piece of code)~~
 
-    * Highlight the current memory cell on the tape and current instruction
+    * Highlight the ~~current memory cell on the tape and~~ current instruction
 
-    * Set a delay for all instruction executions. Let the user control how fast it goes
+    * Set a delay for all instruction executions. Let the user control how fast it goes. (This is not working as expected)
 

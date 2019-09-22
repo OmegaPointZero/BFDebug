@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>
-          The <code>BrainFuck</code> Debugger - version 0.0.4
+          The <code>BrainFuck</code> Debugger - version 0.0.6
         </h1>
         <p>
             Below, paste or type your brainfuck program into the input area. Hit the button to start it, and watch it populate the memory in the space below.

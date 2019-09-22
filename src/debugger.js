@@ -6,7 +6,7 @@ class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "+>+>+>+!>+>+>+>+>+>+++++>+<<<<<<<<<<<<<<", /* fixed for now, will load into memory via user input later */
+            program: "++++++++++![>+!+++++++++>++++++++++<<-]>>", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
@@ -36,7 +36,6 @@ class Debugger extends Component {
         this.setState({
             tape: newTape
         }, () => {
-            console.log(`incremented tape to ${item}`)
         });
     }
 
@@ -55,7 +54,6 @@ class Debugger extends Component {
         this.setState({
             tape: newTape
         }, () => {
-            console.log(`decremented tape to ${item}`)
         });
     }
 
@@ -80,6 +78,8 @@ class Debugger extends Component {
         var eip = this.state.eip;
         var dp = this.state.dp;
         var execNum = this.state.execNum;
+        var workingIP = eip;
+        var count = 1;
         switch(this.state.program[eip]){
             case '+':
                 this.increment_tape(this.state.dp);
@@ -89,7 +89,7 @@ class Debugger extends Component {
                 break; 
             case '>':
                 if(dp===30000){
-                    this.setState({error: 'Encountered \'>\' instruction at right end of tape.', running: false})
+                    this.setState({error: 'HALTED: Encountered \'>\' instruction at right end of tape.', running: false})
                 } else {
                     if(dp===this.state.debugging_memory){
                         this.setState({debugging_memory: dp+1})
@@ -99,13 +99,42 @@ class Debugger extends Component {
                 break;
             case '<':
                 if(dp===0){
-                    this.setState({error: 'Encountered \'<\' instruction at left end of tape.', running: false})
+                    this.setState({error: 'HALTED: Encountered \'<\' instruction at left end of tape.', running: false})
                 } else {
                     this.setState({dp: dp-1});
                 }
                 break; 
+            case '[':
+                console.log('finding matching closing bracket!')
+                if(this.state.tape[dp]===0){
+                    while(count>0){
+                        workingIP++;
+                        if(this.state.program[workingIP] === '['){
+                            count++;
+                        } else if(this.state.program[workingIP] === ']'){
+                            count--;
+                        }
+                    }
+                    this.setState({eip:workingIP})
+                }
+                break;
+            case ']':
+                console.log('finding matching opening bracket!')
+                if(this.state.tape[dp]!==0){
+                    while(count>0){
+                        workingIP--;
+                        if(this.state.program[workingIP] === '['){
+                            count--;
+                        } else if(this.state.program[workingIP] === ']'){
+                            count++;
+                        }
+                    }
+                    this.setState({eip:workingIP})
+                }
+                break;
             case '!':
                 this.setState({running: false});
+                break;
             default:
                 break;
         }
@@ -125,26 +154,31 @@ class Debugger extends Component {
             runningStatus = "false"
         }
 
+        /* change class of error message if there's an actual message */
+        var errorMessage = "";
+        if(this.state.error !== "None"){
+            errorMessage = "errorMessage"
+        }
+
         return (<div className="debuggerDisplay">
             <div>
-                <h3>Debugger State</h3>
+                <h3>Debugger</h3>
                 <ul>
                     <li>Instruction Pointer: {this.state.eip}</li>
                     <li>Data Pointer: {this.state.dp}</li>
                     <li>Running status:  {runningStatus}</li>
-                    <li className="errorMessage">Error: {this.state.error}</li>
+                    <li className={errorMessage}>Error: {this.state.error}</li>
                     <li>Number of executed instructions: {this.state.execNum}</li>
                 </ul>
             </div>
-            <div className="tapeMemoryDisplay">
-                <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
-            </div><br />
+            <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
+            <br />
             <div className="debugOptions">
                 <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
                 <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button>
             </div>
-            <div><br />
-            <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} />
+            <div>
+                <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} />
             </div>            
         </div>
         )

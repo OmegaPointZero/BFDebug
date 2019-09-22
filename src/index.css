@@ -16,8 +16,16 @@ code {
     width: 90%;
 }
 
+.tapeMemoryDisplay{
+    display: inline-block;
+    padding: 5px;
+    height: 20%;
+    width:100%;
+}
+
 .tapeDisplay{
     display: flex;
+    float: left;
 }
 
 .tapeCell{
@@ -27,7 +35,6 @@ code {
     border-width: 2px;
     border-color: white;
     margin: auto;
-    float: left;
 }
 
 .active{
