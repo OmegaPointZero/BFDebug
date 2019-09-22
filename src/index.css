@@ -27,9 +27,18 @@ code {
     border-width: 2px;
     border-color: white;
     margin: auto;
+    float: left;
 }
 
 .active{
     background-color: #CCCC00;
     color: #222200;
+}
+
+ul{
+    text-align: left;
+}
+
+.errorMessage{
+    color: red;
 }

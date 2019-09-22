@@ -6,13 +6,14 @@ class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "+>+>+>+!>+>+>+>+>+>+>+<<<<", /* fixed for now, will load into memory via user input later */
+            program: "+>+>+>+!>+>+>+>+>+>+++++>+<<<<<<<<<<<<<<", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
             tape: new Array(30000).fill(0),
-            debugging_memory: 5, /* Don't display all 30,000 cells at once, only the number of cells outlined in debugging memory. For now, that is a fixed value until we can update state somewhat-synchronously */
-            error: null,
+            debugging_memory: 4, /* Don't display all 30,000 cells at once, only the number of cells outlined in debugging memory. For now, that is a fixed value until we can update state somewhat-synchronously */
+            error: "None",
+            execNum: 0 /* Number of instructions executed */
         }
     }
 
@@ -68,7 +69,7 @@ class Debugger extends Component {
     }
 
     start_debugger(){
-        this.setState({eip:0,dp:0,tape: new Array(30000).fill(0),running:true})
+        this.setState({eip:0,dp:0,tape: new Array(30000).fill(0),running:true,error:"None"})
     }
 
     continue_from_breakpoint(){
@@ -78,6 +79,7 @@ class Debugger extends Component {
     run_debugger(){
         var eip = this.state.eip;
         var dp = this.state.dp;
+        var execNum = this.state.execNum;
         switch(this.state.program[eip]){
             case '+':
                 this.increment_tape(this.state.dp);
@@ -110,15 +112,32 @@ class Debugger extends Component {
         if(eip === this.state.program.length){
             this.setState({running: false});
         } else {
-            this.setState({eip: eip+1});
+            this.setState({execNum: execNum+1,eip: eip+1});
         }
     }
 
     render(){
+
+        var runningStatus;
+        if(this.state.running){
+            runningStatus = "true"
+        } else {
+            runningStatus = "false"
+        }
+
         return (<div className="debuggerDisplay">
+            <div>
+                <h3>Debugger State</h3>
+                <ul>
+                    <li>Instruction Pointer: {this.state.eip}</li>
+                    <li>Data Pointer: {this.state.dp}</li>
+                    <li>Running status:  {runningStatus}</li>
+                    <li className="errorMessage">Error: {this.state.error}</li>
+                    <li>Number of executed instructions: {this.state.execNum}</li>
+                </ul>
+            </div>
             <div className="tapeMemoryDisplay">
                 <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
-
             </div><br />
             <div className="debugOptions">
                 <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
