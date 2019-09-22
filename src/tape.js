@@ -25,7 +25,8 @@ class TapeDisplay extends Component{
     render(){
         return(
             <div className="tapeMemoryDisplay">
-                <p>
+                <h3>Tape</h3>
+                <p style={{textAlign:'left'}}>
                     Currently selected tape position: {this.props.dp+1}
                 </p>
                 <div className="tapeDisplay">

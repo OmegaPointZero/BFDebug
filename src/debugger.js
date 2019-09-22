@@ -1,19 +1,24 @@
 import React, {Component} from 'react';
 import TapeDisplay from './tape';
+import Output from './output';
+import Input from './input';
+import DebugInfo from './DebugInfo';
 import './App.css';
 
 class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "++++++++++[>++++++++++>++++++++++<<-]", /* fixed for now, will load into memory via user input later */
+            program: "++++++++++[>++++++++>++++++++++>++++++++++++>++++++++++>+++++++++++>++++++++++++>+++++++++++<<<<<<<-]>----->--->---->+>-->+<<<<<!.>.>.>.>.>.>.", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
             tape: new Array(30000).fill(0),
             debugging_memory: 4, /* Don't display all 30,000 cells at once, only the number of cells outlined in debugging memory. For now, that is a fixed value until we can update state somewhat-synchronously */
             error: "None",
-            execNum: 0 /* Number of instructions executed */
+            breakpoint: false,
+            execNum: 0, /* Number of instructions executed */
+            output: ""
         }
     }
 
@@ -63,7 +68,7 @@ class Debugger extends Component {
             if(that.state.running === true){
                 that.run_debugger();
             }
-        }, 300);
+        }, 81);
     }
 
     start_debugger(){
@@ -71,7 +76,7 @@ class Debugger extends Component {
     }
 
     continue_from_breakpoint(){
-        this.setState({running:true})
+        this.setState({running:true, breakpoint:false})
     }
 
     run_debugger(){
@@ -131,8 +136,13 @@ class Debugger extends Component {
                     eip = workingIP;
                 }
                 break;
+            case '.':
+                var output = this.state.output;
+                output += String.fromCharCode(this.state.tape[dp])
+                this.setState({output: output});
+                break;
             case '!':
-                this.setState({running: false});
+                this.setState({running: false, breakpoint:true});
                 break;
             default:
                 break;
@@ -160,18 +170,16 @@ class Debugger extends Component {
         }
 
         return (<div className="debuggerDisplay">
-            <div>
-                <h3>Debugger</h3>
-                <ul>
-                    <li>Instruction Pointer: {this.state.eip}</li>
-                    <li>Data Pointer: {this.state.dp}</li>
-                    <li>Running status:  {runningStatus}</li>
-                    <li className={errorMessage}>Error: {this.state.error}</li>
-                    <li>Number of executed instructions: {this.state.execNum}</li>
-                </ul>
-            </div>
+
+            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={runningStatus} errorMessage={errorMessage} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/>
+
             <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
-            <br />
+
+            <Output output={this.state.output} />
+
+            <Input />
+
+
             <div className="debugOptions">
                 <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
                 <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button>
