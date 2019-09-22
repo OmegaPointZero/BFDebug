@@ -6,7 +6,7 @@ class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "++++++++++![>+!+++++++++>++++++++++<<-]>>", /* fixed for now, will load into memory via user input later */
+            program: "++++++++++[>++++++++++>++++++++++<<-]", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
@@ -78,7 +78,7 @@ class Debugger extends Component {
         var eip = this.state.eip;
         var dp = this.state.dp;
         var execNum = this.state.execNum;
-        var workingIP = eip;
+        var workingIP = this.state.eip;
         var count = 1;
         switch(this.state.program[eip]){
             case '+':
@@ -105,10 +105,10 @@ class Debugger extends Component {
                 }
                 break; 
             case '[':
-                console.log('finding matching closing bracket!')
-                if(this.state.tape[dp]===0){
+                 if(this.state.tape[dp]===0){
                     while(count>0){
                         workingIP++;
+                        console.log(this.state.program[workingIP])
                         if(this.state.program[workingIP] === '['){
                             count++;
                         } else if(this.state.program[workingIP] === ']'){
@@ -119,7 +119,6 @@ class Debugger extends Component {
                 }
                 break;
             case ']':
-                console.log('finding matching opening bracket!')
                 if(this.state.tape[dp]!==0){
                     while(count>0){
                         workingIP--;
@@ -129,7 +128,7 @@ class Debugger extends Component {
                             count++;
                         }
                     }
-                    this.setState({eip:workingIP})
+                    eip = workingIP;
                 }
                 break;
             case '!':

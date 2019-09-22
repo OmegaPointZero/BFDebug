@@ -22,7 +22,7 @@ The debugger is ultimately held in the state of `debugger.js`:
 
 The application is currently undergoing a refactor, that appears to be working out better than the previous implementation. The current version is 0.0.06. 
 
-### 0.0.6 Updates
+### 0.0.7 Updates
 
 * Debugger information shows the user the following:
 
@@ -50,6 +50,8 @@ The application is currently undergoing a refactor, that appears to be working o
 
     * Input section needs to be resized
 
+* Looping functions have been fixed
+
 ### Current goals
 
 * Execute the Brainfuck code. 
@@ -60,7 +62,9 @@ The application is currently undergoing a refactor, that appears to be working o
         * ~~**2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.~~
         * **3**: Print character at `state.tape[state.dp]` with **.**
         * **4**: Write input from STDIN to `state.tape[state.dp]` with **,**
-
+        * ~~**5**: Iterate through loop successfully~~
+    * Add area to display output
+    * Add area to input as like from STDIN
 
 * Implement basic debugging
     * ~~A way to set breakpoints (ideally, by just clicking on a piece of code)~~
