@@ -1,27 +1,25 @@
 import React, {Component} from 'react';
 
 class TapeDisplay extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            tape: this.props.tape,
-            order: this.props.order
-        }
+
+    render_cell(cell, index){
+        return(<div className="tapeCell" style={{order: index}} key={index}>{cell}</div>)
     }
 
     render_cells(tape,order){
-        var display_cells = [];
+        var tapeArray = [];
         for(var i=0;i<order;i++){
-            console.log(`tape[${i}]: ${tape[i]}`)
-            display_cells[i] = tape[i];
+            tapeArray.push(this.render_cell(tape[i], i))
         }
-        console.log(`display_cells[]:`)
-        console.log(display_cells)
+        return tapeArray;
     }
 
     render(){
-        this.render_cells(this.props.tape, this.props.order)
-        return(<h2>TAPE DISPLAY!</h2>)
+        return(
+            <div className="tapeDisplay">
+                {this.render_cells(this.props.tape, this.props.order)}
+            </div>
+        )
     }
 }
 
