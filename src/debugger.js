@@ -68,7 +68,7 @@ class Debugger extends Component {
     }
 
     start_debugger(){
-        this.setState({running:true})
+        this.setState({eip:0,dp:0,tape: new Array(30000).fill(0),running:true})
     }
 
     continue_from_breakpoint(){
