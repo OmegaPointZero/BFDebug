@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import TapeDisplay from './tape';
 import Output from './output';
-import Input from './input';
 import DebugInfo from './DebugInfo';
 import './App.css';
 
@@ -9,7 +8,7 @@ class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "++++++++++[>++++++++>++++++++++>++++++++++++>++++++++++>+++++++++++>++++++++++++>+++++++++++<<<<<<<-]>----->--->---->+>-->+<<<<<!.>.>.>.>.>.>.", /* fixed for now, will load into memory via user input later */
+            program: ",>,>,>,>,>,>,>,>,<<<<<<<<.>.>.>.>.>.>.>.>.", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
@@ -18,13 +17,15 @@ class Debugger extends Component {
             error: "None",
             breakpoint: false,
             execNum: 0, /* Number of instructions executed */
-            output: ""
+            output: "",
+            input: ""
         }
+        this.handleChange = this.handleChange.bind(this);
     }
 
-/* test program for when all operators are programmed:
-++++++++++[>++++++++++>++++++++++>++++++++++>++++++++++<<<<-]>.>.>.>.>,>,>,>,>,<<<<<.>.>.>.>.
-*/
+    handleChange(event){
+        this.setState({input: event.target.value});
+    }
 
     increment_tape = (index) => {
         var item = this.state.tape[index]
@@ -62,6 +63,21 @@ class Debugger extends Component {
         });
     }
 
+    write_char_to_tape(){
+        var input = this.state.input;
+        var num = input.charCodeAt(0);
+        var index= this.state.dp
+        console.log(`input: ${input}\nnum: ${num}`)
+        const newTape = [
+            ...this.state.tape.slice(0, index),
+            num,
+            ...this.state.tape.slice(index+1)
+        ]
+        this.setState({
+            tape: newTape,
+            input: input.slice(1,)
+        })
+    }
     componentDidUpdate(){
         var that = this;
         setTimeout(function(){
@@ -72,7 +88,13 @@ class Debugger extends Component {
     }
 
     start_debugger(){
-        this.setState({eip:0,dp:0,tape: new Array(30000).fill(0),running:true,error:"None"})
+        this.setState({
+            eip:0,
+            dp:0,
+            tape: new Array(30000).fill(0),
+            running:true,
+            error:"None",
+        })
     }
 
     continue_from_breakpoint(){
@@ -141,6 +163,9 @@ class Debugger extends Component {
                 output += String.fromCharCode(this.state.tape[dp])
                 this.setState({output: output});
                 break;
+            case ',':
+                this.write_char_to_tape()
+                break;
             case '!':
                 this.setState({running: false, breakpoint:true});
                 break;
@@ -156,34 +181,26 @@ class Debugger extends Component {
 
     render(){
 
-        var runningStatus;
-        if(this.state.running){
-            runningStatus = "true"
-        } else {
-            runningStatus = "false"
-        }
-
-        /* change class of error message if there's an actual message */
-        var errorMessage = "";
-        if(this.state.error !== "None"){
-            errorMessage = "errorMessage"
-        }
-
         return (<div className="debuggerDisplay">
 
-            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={runningStatus} errorMessage={errorMessage} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/>
+            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={this.state.running} errorMessage={this.state.error} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/>
 
             <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
-
-            <Output output={this.state.output} />
-
-            <Input />
-
-
+            Pending input: {this.state.input}
             <div className="debugOptions">
                 <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
                 <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button>
             </div>
+            <div className="inline">
+                <div className="inputContainer">
+                    <Output output={this.state.output} />
+                    <div className="inputFieldContainer">
+                        <h3>Program Input</h3>
+                        <input onChange={this.handleChange} />
+                    </div>
+                </div>
+            </div>
+
             <div>
                 <textarea id="programInput" type="text" value={this.state.value} onChange={this.handleChange} />
             </div>            

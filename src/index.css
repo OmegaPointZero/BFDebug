@@ -7,6 +7,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.noOverflow{
+  overflow: hidden !important;
+  display: inline-block;
+  position: relative;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -17,6 +22,7 @@ code {
 }
 
 .tapeMemoryDisplay{
+    margin-left: auto;
     display: inline-block;
     padding: 5px;
     height: 20%;
@@ -25,7 +31,9 @@ code {
 
 .tapeDisplay{
     display: flex;
+    flex-wrap: wrap;
     float: left;
+    max-width: 99%;
 }
 
 .tapeCell{
@@ -52,4 +60,25 @@ ul{
 
 .greenLight{
     color: green;
+}
+
+.inputContainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    float: left;
+    width: 90%;
+    padding: 5px;
+}
+
+.inputFieldContainer{
+    min-width: 45%;
+    max-width: 81%;
+    margin: 9%;
+    position: relative;
+}
+
+.inline{
+    display: inline-block;
+    width: 100%;
 }

@@ -20,51 +20,31 @@ The debugger is ultimately held in the state of `debugger.js`:
 
 ## Current state of development
 
-The application is currently undergoing a refactor, that appears to be working out better than the previous implementation. The current version is 0.0.06. 
+The first functional version of the app is 90% complete. The top debugger panel displays all of the relevant information, input/output handled well, tape display functioning perfectly, the run/continue buttons work.
 
-### 0.0.7 Updates
+What needs to be done next is a way of loading the program from user input, as well as a pause button that acts as an immediate breakpoint.
 
-* Debugger information shows the user the following:
+Some work needs to be done on how the Program Output and Program Input are displayed. What looks good on desktop doesn't look good on mobile, what looks good on mobile doesn't look good on desktop.
 
-    * Instruction pointer
+### 0.9.1 Updates
 
-    * Data Pointer
+* Input and output fields are now both functional
 
-    * Running status (true/false)
-
-    * Errors thrown by the debugger
-
-    * Number of cumulatively executed instructions
-
-* Tape Display is now functional. It shows the user the tape so far, and highlights the currently selected tape cell. Upon attempting to increment above 255 (1111 1111 in binary), it "rolls over" to 0; decrementing while at 0 "rolls over" to 255. These do not affect neighboring cells.
-
-* Breakpoint functionality has been added. A bang (!) in the BF code sets a breakpoint, where execution halts. This can be resumed by clicking the "continue" button, or reset with the "run" button.
-
-    * Perhaps the continue button should only be enabled if the running status is false and the instruction pointer is greater than 0.
-
-* The program is still hard-coded; allowing user input for the BF program needs additional work:
-
-    * The input form should, upon code execution, "grey out", and not let the user touch it until the execution has been halted. 
-
-    * The current instruction should be, somehow, highlighted in the "greyed out" input section
-
-    * Input section needs to be resized
-
-* Looping functions have been fixed
+    * ALL of the input required for the brainfuck program is to be input at once. Missing characters get entered as NaN, need to add a prompt for this?
 
 ### Current goals
 
 * Execute the Brainfuck code. 
     * Load the instructions from the user
-    * ~~Initialize the tape~~
+    * ~~Initialize the tape
     * Testing phases:
-        * ~~**1**: Increment/decrement `state.dp` with **>** and **<**~~
-        * ~~**2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.~~
+        * *1**: Increment/decrement `state.dp` with **>** and **<**
+        * **2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.
         * **3**: Print character at `state.tape[state.dp]` with **.**
         * **4**: Write input from STDIN to `state.tape[state.dp]` with **,**
-        * ~~**5**: Iterate through loop successfully~~
+        * **5**: Iterate through loop successfully
     * Add area to display output
-    * Add area to input as like from STDIN
+    * Add area to input as like from STDIN~~
 
 * Implement basic debugging
     * ~~A way to set breakpoints (ideally, by just clicking on a piece of code)~~

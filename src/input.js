@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 
 class Input extends Component{
+    constructor(props){
+        super(props)
+    }
 
     render(){
         return(
-            <div>
+            <div className="inputFieldContainer">
                 <h3>Program Input</h3>
-                <input />
+                <input onChange={this.handleChange} />
             </div>
         )
     }

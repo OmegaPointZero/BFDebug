@@ -4,6 +4,9 @@ class DebugInfo extends Component {
 
 
     render(){
+
+
+
         var bpClass = "";
         var bpStatus;
         var runningClass;
@@ -14,9 +17,19 @@ class DebugInfo extends Component {
             bpStatus = "false";
         }
 
-        if(this.props.runningStatus === "true"){
+        var runningStatus;
+        if(this.props.runningStatus === true){
+            runningStatus = "true"
             runningClass = "greenLight"
+        } else {
+            runningStatus = "false"
         }
+
+        /* change class of error message if there's an actual message */
+        var errorMessage = "";
+        if(this.props.errorMessage !== "None"){
+            errorMessage = "errorMessage"
+        } 
 
         return(
             <div>
@@ -24,9 +37,9 @@ class DebugInfo extends Component {
                 <ul>
                     <li>Instruction Pointer: {this.props.eip}</li>
                     <li>Data Pointer: {this.props.dp}</li>
-                    <li className={runningClass}>Running status:  {this.props.runningStatus}</li>
+                    <li className={runningClass}>Running status:  {runningStatus}</li>
                     <li className={bpClass} >Breakpoint: {bpStatus}</li>
-                    <li className={this.props.errorMessage}>Error: {this.props.error}</li>
+                    <li className={errorMessage}>Error: {this.props.error}</li>
                     <li>Number of executed instructions: {this.props.execNum}</li>
                 </ul>
             </div>
