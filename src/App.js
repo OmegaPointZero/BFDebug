@@ -7,7 +7,7 @@ function App() {
     <div className="App noOverflow">
         <header className="App-header">
         <h1>
-          The <code>BrainFuck</code> Debugger - version 0.9.2
+          The <code>BrainFuck</code> Debugger - version 0.9.9
         </h1>
         <h3>Debugger features</h3>
         <p>

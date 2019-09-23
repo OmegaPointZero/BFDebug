@@ -26,30 +26,20 @@ What needs to be done next is a way of loading the program from user input, as w
 
 Some work needs to be done on how the Program Output and Program Input are displayed. What looks good on desktop doesn't look good on mobile, what looks good on mobile doesn't look good on desktop.
 
-### 0.9.1 Updates
+### 0.9.9 Updates
 
-* Input and output fields are now both functional
+All basic features are fully functional.  There is a display for the debugging information, buttons to run, continue and step through the program, a display for the tape, a display for the STDOUT, a display for the STDIN, and a display for the currently loaded program. For all intents and purposes, it's fully functional.
 
-    * ALL of the input required for the brainfuck program is to be input at once. Missing characters get entered as NaN, need to add a prompt for this?
+There is, however, additional work to be done. 
 
-### Current goals
+* Displays for the STDIN, STDOUT and Program should be re-styled to look better
 
-* Execute the Brainfuck code. 
-    * Load the instructions from the user
-    * ~~Initialize the tape
-    * Testing phases:
-        * *1**: Increment/decrement `state.dp` with **>** and **<**
-        * **2**: Increment/decrement `state.tape[state.dp]` with **+** and **-**.
-        * **3**: Print character at `state.tape[state.dp]` with **.**
-        * **4**: Write input from STDIN to `state.tape[state.dp]` with **,**
-        * **5**: Iterate through loop successfully
-    * Add area to display output
-    * Add area to input as like from STDIN~~
+* Testing of both desktop/mobile displays needs to be done, until it's functional and aesthetic for both. 
 
-* Implement basic debugging
-    * ~~A way to set breakpoints (ideally, by just clicking on a piece of code)~~
+* The debugger should highlight the currently executed instruction
 
-    * Highlight the ~~current memory cell on the tape and~~ current instruction
+* Time delay for the execution instruction needs to be fixed
 
-    * Set a delay for all instruction executions. Let the user control how fast it goes. (This is not working as expected)
+* Input alert in case the debugger tries to read from STDIN to the 
+
 

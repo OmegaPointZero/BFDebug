@@ -72,14 +72,32 @@ ul{
 }
 
 /*This one*/
-.inputFieldContainer{
-    min-width: 45%;
-    max-width: 81%;
-    margin: 9%;
-    position: relative;
+@media(max-width: 480px){
+    .inputFieldContainer{
+        min-width: 45%;
+        max-width: 81%;
+        margin: 3%;
+        position: relative;
+    }
+}
+
+@media(min-width: 481px){
+    .inputFieldContainer{
+        max-width: 30%;
+        margin: 3%;
+        position: relative;
+    }
+
 }
 
 .inline{
     display: inline-block;
     width: 100%;
+}
+
+button{
+    margin: 2%;
+    width: 9%;
+    min-height: 36px;
+    border-radius: 3%;
 }

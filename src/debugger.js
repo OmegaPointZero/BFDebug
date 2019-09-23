@@ -8,10 +8,12 @@ class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: ",>,>,>,>,>,>,>,>,<<<<<<<<.>.>.>.>.>.>.>.>.", /* fixed for now, will load into memory via user input later */
+            program: "+[--->++<]>+.++[->++++<]>+.+++++++.---------.++++++++++++.--.--------.--[--->+<]>-.---[->++++<]>.-----.[--->+<]>-----.---[->++++<]>.------------.---.--[--->+<]>-.[->+++<]>++.[--->+<]>----.+++[->+++<]>++.++++++++.+++++.--------.-[--->+<]>--.+[->+++<]>+.++++++++.-[++>---<]>+.+[->+++<]>+.+.---.[--->+<]>-.++[->+++<]>++..--.+++++++++++++.[--->+<]>-----.", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
+            inp: 0, /* Input pointer: index of where to read from the input, implemented to make it easy to reset */
             running: false, /* whether or not the debugger is running, will be used to implement breakpoints later */
+            step: false, /* Step through the debugger, one instruction at a time */
             tape: new Array(30000).fill(0),
             debugging_memory: 4, /* Don't display all 30,000 cells at once, only the number of cells outlined in debugging memory. For now, that is a fixed value until we can update state somewhat-synchronously */
             error: "None",
@@ -29,7 +31,9 @@ class Debugger extends Component {
     }
 
     handleProgramChange(event){
-        this.setState({input: event.target.value});
+        console.log('handling program change')
+        console.log(event.target.textContent)
+        this.setState({program: event.target.textContent});
     }
 
     increment_tape = (index) => {
@@ -70,9 +74,9 @@ class Debugger extends Component {
 
     write_char_to_tape(){
         var input = this.state.input;
-        var num = input.charCodeAt(0);
+        var inputPointer = this.state.inp
+        var num = input.charCodeAt(inputPointer);
         var index= this.state.dp
-        console.log(`input: ${input}\nnum: ${num}`)
         const newTape = [
             ...this.state.tape.slice(0, index),
             num,
@@ -80,13 +84,13 @@ class Debugger extends Component {
         ]
         this.setState({
             tape: newTape,
-            input: input.slice(1,)
+            inp: inputPointer +1
         })
     }
     componentDidUpdate(){
         var that = this;
         setTimeout(function(){
-            if(that.state.running === true){
+            if(that.state.running === true || that.state.step === true){
                 that.run_debugger();
             }
         }, 81);
@@ -96,10 +100,16 @@ class Debugger extends Component {
         this.setState({
             eip:0,
             dp:0,
+            inp: 0,
             tape: new Array(30000).fill(0),
             running:true,
             error:"None",
+            output: ""
         })
+    }
+
+    step(){
+        this.setState({step: true})
     }
 
     continue_from_breakpoint(){
@@ -177,6 +187,10 @@ class Debugger extends Component {
             default:
                 break;
         }
+
+        if(this.state.step === true){
+            this.setState({running:false, step: false});
+        }
         if(eip === this.state.program.length){
             this.setState({running: false});
         } else {
@@ -188,28 +202,32 @@ class Debugger extends Component {
 
         return (<div className="debuggerDisplay">
 
-            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={this.state.running} errorMessage={this.state.error} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/>
-            <div className="debugOptions">
-                <button id="run" onClick={() => {this.start_debugger()}}>Run</button>&nbsp;
-                <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button>
-            </div>
-            <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} />
-            <div className="inline">
-                <div className="inputContainer">
-                    <Output output={this.state.output} />
-                    <div className="inputFieldContainer">
-                        <h3>Standard Input</h3>
-                        <input onChange={this.handleInputChange} />
-                    </div>
-                    <div className="inputFieldContainer">
-                        <h3>Brainfuck Program</h3>
-                        <textarea id="programInput" type="text" value={this.state.program} onChange={this.handleProgramChange} />
-                    </div>
-                </div>
-            </div>
-        </div>
-        )
-    }
-}
+            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={this.state.running} errorMessage={this.state.error} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/> 
+            <div className="debugOptions"> 
+                <button id="run" onClick={() => {this.start_debugger()}}>Run</button> 
+                <button id="step" onClick={() => {this.step()}}>Step</button> 
+                <button id="continue" onClick={() => {this.continue_from_breakpoint()}}>Continue</button> 
 
-export default Debugger;    
+            </div> 
+            <TapeDisplay tape={this.state.tape} order={this.state.debugging_memory} dp={this.state.dp} /> 
+            <div className="inline"> 
+                <div className="inputContainer"> 
+                    <Output output={this.state.output} /> 
+                    <div className="inputFieldContainer"> 
+                        <h3>Standard Input</h3> 
+                        <input onChange={this.handleInputChange} /> 
+                    </div> 
+                    <div className="inputFieldContainer"> 
+                        <h3>Brainfuck Program</h3> 
+                        <div contentEditable="true" suppressContentEditableWarning={true} id="programInput" type="text" onInput={this.handleProgramChange}> 
+                            {this.state.program} 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+        ) 
+    } 
+} 
+ 
+export default Debugger; 
