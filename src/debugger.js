@@ -2,13 +2,14 @@ import React, {Component} from 'react';
 import TapeDisplay from './tape';
 import Output from './output';
 import DebugInfo from './DebugInfo';
+import RunningDisplay from './RunningDisplay';
 import './App.css';
 
 class Debugger extends Component {
     constructor(props){
         super(props);
         this.state = { 
-            program: "+[--->++<]>+.++[->++++<]>+.+++++++.---------.++++++++++++.--.--------.--[--->+<]>-.---[->++++<]>.-----.[--->+<]>-----.---[->++++<]>.------------.---.--[--->+<]>-.[->+++<]>++.[--->+<]>----.+++[->+++<]>++.++++++++.+++++.--------.-[--->+<]>--.+[->+++<]>+.++++++++.-[++>---<]>+.+[->+++<]>+.+.---.[--->+<]>-.++[->+++<]>++..--.+++++++++++++.[--->+<]>-----.", /* fixed for now, will load into memory via user input later */
+            program: "++++++++++[>++++++++++>++++++++++>+++++++++++>+++++++++++<<<<-]>++++.>+.>--..>+.", /*"+[--->++<]>+.++[->++++<]>+.+++++++.---------.++++++++++++.--.--------.--[--->+<]>-.---[->++++<]>.-----.[--->+<]>-----.---[->++++<]>.------------.---.--[--->+<]>-.[->+++<]>++.[--->+<]>----.+++[->+++<]>++.++++++++.+++++.--------.-[--->+<]>--.+[->+++<]>+.++++++++.-[++>---<]>+.+[->+++<]>+.+.---.[--->+<]>-.++[->+++<]>++..--.+++++++++++++.[--->+<]>-----.", /* fixed for now, will load into memory via user input later */
             eip: 0, /* instruction pointer, to replace the broken for loop */
             dp: 0, /* Data pointer, where on the tape we are */
             inp: 0, /* Input pointer: index of where to read from the input, implemented to make it easy to reset */
@@ -17,6 +18,7 @@ class Debugger extends Component {
             tape: new Array(30000).fill(0),
             debugging_memory: 4, /* Don't display all 30,000 cells at once, only the number of cells outlined in debugging memory. For now, that is a fixed value until we can update state somewhat-synchronously */
             error: "None",
+            finished: false,
             breakpoint: false,
             execNum: 0, /* Number of instructions executed */
             output: "",
@@ -24,6 +26,15 @@ class Debugger extends Component {
         }
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleProgramChange = this.handleProgramChange.bind(this);
+    }
+
+    componentDidUpdate(){
+        var that = this;
+        setTimeout(function(){
+            if(that.state.running === true || that.state.step === true){
+                that.run_debugger();
+            }
+        }, 81);
     }
 
     handleInputChange(event){
@@ -86,14 +97,6 @@ class Debugger extends Component {
             tape: newTape,
             inp: inputPointer +1
         })
-    }
-    componentDidUpdate(){
-        var that = this;
-        setTimeout(function(){
-            if(that.state.running === true || that.state.step === true){
-                that.run_debugger();
-            }
-        }, 81);
     }
 
     start_debugger(){
@@ -192,7 +195,7 @@ class Debugger extends Component {
             this.setState({running:false, step: false});
         }
         if(eip === this.state.program.length){
-            this.setState({running: false});
+            this.setState({running: false, finished: true, error:"Program finished successfully"});
         } else {
             this.setState({execNum: execNum+1,eip: eip+1});
         }
@@ -202,7 +205,8 @@ class Debugger extends Component {
 
         return (<div className="debuggerDisplay">
 
-            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={this.state.running} errorMessage={this.state.error} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint}/> 
+            <DebugInfo eip={this.state.eip} dp={this.state.dp} runningStatus={this.state.running} errorMessage={this.state.error} error={this.state.error} execNum={this.state.execNum} breakpoint={this.state.breakpoint} finished={this.state.finished}/> 
+            <RunningDisplay eip={this.state.eip} program={this.state.program}  display={this.state.running}/>
             <div className="debugOptions"> 
                 <button id="run" onClick={() => {this.start_debugger()}}>Run</button> 
                 <button id="step" onClick={() => {this.step()}}>Step</button> 
@@ -219,7 +223,7 @@ class Debugger extends Component {
                     </div> 
                     <div className="inputFieldContainer"> 
                         <h3>Brainfuck Program</h3> 
-                        <div contentEditable="true" suppressContentEditableWarning={true} id="programInput" type="text" onInput={this.handleProgramChange}> 
+                        <div id="programInputDiv" contentEditable="true" suppressContentEditableWarning={true} type="text"  onInput={this.handleProgramChange}> 
                             {this.state.program} 
                         </div> 
                     </div> 

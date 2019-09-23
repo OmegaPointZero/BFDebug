@@ -2,10 +2,7 @@ import React, {Component} from 'react';
 
 class DebugInfo extends Component {
 
-
     render(){
-
-
 
         var bpClass = "";
         var bpStatus;
@@ -25,11 +22,13 @@ class DebugInfo extends Component {
             runningStatus = "false"
         }
 
-        /* change class of error message if there's an actual message */
-        var errorMessage = "";
-        if(this.props.errorMessage !== "None"){
-            errorMessage = "errorMessage"
-        } 
+        var errorMessageClass = "";
+        var message = this.props.error;
+        if(this.props.errorMessage !== "None" && this.props.finished === false){
+            errorMessageClass = "errorMessage"
+        } else if(this.props.errorMessage !== "None" && this.props.finished === true){
+            errorMessageClass = "greenLight"
+        }
 
         return(
             <div>
@@ -39,8 +38,9 @@ class DebugInfo extends Component {
                     <li>Data Pointer: {this.props.dp}</li>
                     <li className={runningClass}>Running status:  {runningStatus}</li>
                     <li className={bpClass} >Breakpoint: {bpStatus}</li>
-                    <li className={errorMessage}>Error: {this.props.error}</li>
+                    <li className={errorMessageClass}>{message}</li>
                     <li>Number of executed instructions: {this.props.execNum}</li>
+
                 </ul>
             </div>
         )
